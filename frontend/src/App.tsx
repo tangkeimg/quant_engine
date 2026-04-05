@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Card, Spin, Typography, Toast } from '@douyinfe/semi-ui';
 import ReactECharts from 'echarts-for-react';
-// 👉 注意：引入之前封装好的 API 和类型定义
 import { getIndexData, type StockData } from './api/stock';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
 const App: React.FC = () => {
+    const [theme, _] = useState("dark")
+    useEffect(() => {
+        if (theme === 'dark') {
+            document.body.setAttribute('theme-mode', 'dark');
+        } else {
+            document.body.removeAttribute('theme-mode');
+        }
+    }, [theme])
+
     // 定义状态，用于存储大盘数据
     const [chartData, setChartData] = useState<StockData | null>(null);
     // 定义加载状态
@@ -32,24 +40,24 @@ const App: React.FC = () => {
     const getOption = () => {
         // 如果数据还没回来，返回空配置
         if (!chartData) return {};
-        
+
         return {
-            tooltip: { 
+            tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'cross' } // 专业的十字光标
             },
             // 添加底部和内部缩放滑块，方便查看历史细节
             dataZoom: [
-                { type: 'inside', start: 50, end: 100 }, 
+                { type: 'inside', start: 50, end: 100 },
                 { type: 'slider', start: 50, end: 100 }
             ],
-            xAxis: { 
-                type: 'category', 
+            xAxis: {
+                type: 'category',
                 data: chartData.dates,
                 boundaryGap: false // 金融图表 X 轴通常顶格
             },
-            yAxis: { 
-                type: 'value', 
+            yAxis: {
+                type: 'value',
                 scale: true, // 保证 Y 轴不从 0 开始，真实反映波动
                 splitLine: { lineStyle: { type: 'dashed', color: '#eee' } } // 极细的虚线网格
             },
@@ -61,7 +69,7 @@ const App: React.FC = () => {
                     smooth: false, // K 线图通常不需要平滑曲线
                     showSymbol: false, // 隐藏数据点的小圆圈，更清爽
                     itemStyle: { color: '#E91E63' }, // Semi UI 风格的玫瑰红
-                    areaStyle: { 
+                    areaStyle: {
                         color: 'rgba(233, 30, 99, 0.1)' // 底部浅色阴影
                     },
                     lineStyle: { width: 2 }
@@ -71,27 +79,28 @@ const App: React.FC = () => {
     };
 
     return (
-        <Layout style={{ minHeight: '100vh', backgroundColor: '#f4f5f5' }}>
+        <Layout style={{ minHeight: '100vh' }}>
             {/* 标准顶部导航 */}
-            <Header style={{ padding: '16px 24px', backgroundColor: '#fff', borderBottom: '1px solid #e1e3e5' }}>
-                <Title heading={3} style={{ margin: 0, color: '#1c1f23' }}>
-                    Quant Engine // 终端面板
+            <Header style={{ padding: '16px 24px', borderBottom: '1px solid' }}>
+                <Title heading={3} >
+                    Quant Engine
                 </Title>
             </Header>
             {/* 主体内容区 */}
             <Content style={{ padding: '24px' }}>
                 {/* 使用 Semi UI 的 Card 容器 */}
-                <Card 
-                    title="📈 大盘走势 (上证指数)" 
+                <Card
+                    title="📈 大盘走势 (上证指数)"
                     style={{ maxWidth: 1200, margin: '0 auto', borderRadius: 8 }}
                     headerStyle={{ borderBottom: 'none', paddingBottom: 0 }}
                 >
                     {/* 使用 Spin 组件包裹图表，实现数据加载时的动画 */}
                     <Spin spinning={loading} tip="引擎数据加载中，请稍候...">
-                        <ReactECharts 
-                            option={getOption()} 
-                            style={{ height: 500, width: '100%' }} 
+                        <ReactECharts
+                            option={getOption()}
+                            style={{ height: 500, width: '100%' }}
                             notMerge={true}
+                            theme={theme}
                         />
                     </Spin>
                 </Card>
