@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
-import { type StockData } from '../../api/stock';
+import { type StockData } from '@/api/stock';
 
 // 定义组件接收的属性 (Props)
 interface StockChartProps {
