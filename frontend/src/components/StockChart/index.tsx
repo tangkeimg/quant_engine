@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
 import { type StockData } from '@/api/stock';
+import useThemeStore from '@/store/useThemeStore';
 
 // 定义组件接收的属性 (Props)
 interface StockChartProps {
     chartData: StockData | null;
     loading: boolean;
-    theme: string;
 }
 
-const StockChart: React.FC<StockChartProps> = ({ chartData, loading, theme }) => {
+const StockChart: React.FC<StockChartProps> = ({ chartData, loading }) => {
+    const theme = useThemeStore((s) => s.theme);
     const getOption = () => {
         if (!chartData) return {};
         return {
