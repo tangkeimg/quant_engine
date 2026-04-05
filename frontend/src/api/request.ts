@@ -1,6 +1,6 @@
 import { Toast } from '@douyinfe/semi-ui';
 
-const BASE_URL = 'http://192.168.10.67:18000';
+const BASE_URL = 'http://192.168.10.80:18000';
 
 
 export const request = async <T>(endpoint: string, options?: RequestInit): Promise<T> => {
