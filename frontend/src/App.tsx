@@ -9,11 +9,10 @@ const { Title } = Typography;
 const App: React.FC = () => {
     const [theme, _] = useState("dark")
     useEffect(() => {
-        if (theme === 'dark') {
-            document.body.setAttribute('theme-mode', 'dark');
-        } else {
-            document.body.removeAttribute('theme-mode');
-        }
+        const body = document.body;
+        theme === 'dark'
+            ? body.setAttribute('theme-mode', 'dark')
+            : body.removeAttribute('theme-mode');
     }, [theme])
 
     // 定义状态，用于存储大盘数据
