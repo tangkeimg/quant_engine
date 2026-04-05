@@ -1,48 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Card, Spin, Typography, Toast } from '@douyinfe/semi-ui';
 import ReactECharts from 'echarts-for-react';
+// 👉 注意：引入之前封装好的 API 和类型定义
+import { getIndexData, type StockData } from './api/stock';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-// 定义接口返回的数据结构
-interface StockData {
-    dates: string[];
-    closes: number[];
-}
-
 const App: React.FC = () => {
+    // 定义状态，用于存储大盘数据
     const [chartData, setChartData] = useState<StockData | null>(null);
+    // 定义加载状态
     const [loading, setLoading] = useState<boolean>(true);
 
+    // 🏆 核心：在组件加载时请求数据
     useEffect(() => {
-        // 请求你的后端接口
-        fetch('http://192.168.10.67:18000/api/stocks/index')
-            .then(res => {
-                if (!res.ok) throw new Error('网络响应异常');
-                return res.json();
-            })
+        // 如果后端接口 `/api/stocks/index` 已经可用
+        getIndexData()
             .then((data: StockData) => {
+                // 成功：更新数据状态
                 setChartData(data);
-                setLoading(false);
+                Toast.success({ content: '大盘数据加载完成' });
             })
-            .catch(err => {
-                console.error("引擎连接失败:", err);
-                Toast.error({ content: '后端数据获取失败，请检查 FastAPI 是否启动' });
+            // 原生 request 拦截器会自动 Toast 报错，这里只需要确保加载动画停止
+            .finally(() => {
                 setLoading(false);
             });
-    }, []);
+    }, []); // 依赖项数组为空，表示仅在组件初次挂载时执行
 
     // 动态生成 ECharts 配置项
     const getOption = () => {
+        // 如果数据还没回来，返回空配置
         if (!chartData) return {};
         
         return {
             tooltip: { 
                 trigger: 'axis',
-                axisPointer: { type: 'cross' }
+                axisPointer: { type: 'cross' } // 专业的十字光标
             },
-            // 添加底部缩放滑块，方便查看历史细节
+            // 添加底部和内部缩放滑块，方便查看历史细节
             dataZoom: [
                 { type: 'inside', start: 50, end: 100 }, 
                 { type: 'slider', start: 50, end: 100 }
@@ -55,7 +51,7 @@ const App: React.FC = () => {
             yAxis: { 
                 type: 'value', 
                 scale: true, // 保证 Y 轴不从 0 开始，真实反映波动
-                splitLine: { lineStyle: { type: 'dashed', color: '#eee' } }
+                splitLine: { lineStyle: { type: 'dashed', color: '#eee' } } // 极细的虚线网格
             },
             series: [
                 {
@@ -76,17 +72,21 @@ const App: React.FC = () => {
 
     return (
         <Layout style={{ minHeight: '100vh', backgroundColor: '#f4f5f5' }}>
+            {/* 标准顶部导航 */}
             <Header style={{ padding: '16px 24px', backgroundColor: '#fff', borderBottom: '1px solid #e1e3e5' }}>
                 <Title heading={3} style={{ margin: 0, color: '#1c1f23' }}>
-                    Quant Engine
+                    Quant Engine // 终端面板
                 </Title>
             </Header>
+            {/* 主体内容区 */}
             <Content style={{ padding: '24px' }}>
+                {/* 使用 Semi UI 的 Card 容器 */}
                 <Card 
                     title="📈 大盘走势 (上证指数)" 
                     style={{ maxWidth: 1200, margin: '0 auto', borderRadius: 8 }}
                     headerStyle={{ borderBottom: 'none', paddingBottom: 0 }}
                 >
+                    {/* 使用 Spin 组件包裹图表，实现数据加载时的动画 */}
                     <Spin spinning={loading} tip="引擎数据加载中，请稍候...">
                         <ReactECharts 
                             option={getOption()} 
