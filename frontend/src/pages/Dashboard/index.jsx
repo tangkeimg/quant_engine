@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, Spin, Toast } from '@douyinfe/semi-ui';
 import StockChart from '@/components/StockChart';
 import { getIndexData, getMAStrategyData } from '@/api/stock';
+import TradeTable from '@/components/TradeTable';
 
 function Dashboard() {
     const [chartData, setChartData] = useState(null);
@@ -58,6 +59,7 @@ function Dashboard() {
                         {strategyData ? strategyData.tradeCount : '--'}
                     </div>
                 </Card>
+
             </div>
 
             <Card
@@ -69,6 +71,13 @@ function Dashboard() {
                 <Spin spinning={loading} tip="引擎数据加载中，请稍候...">
                     <StockChart chartData={chartData} loading={loading} />
                 </Spin>
+            </Card>
+
+            <Card
+                title="交易记录"
+                style={{ marginTop: 16, borderRadius: 8 }}
+            >
+                <TradeTable trades={strategyData?.trades || []} />
             </Card>
         </div>
     );
