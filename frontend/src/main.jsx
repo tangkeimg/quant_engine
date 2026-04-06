@@ -1,6 +1,7 @@
 import 'reset-css/reset.css';
 import '@douyinfe/semi-ui/react19-adapter';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 
@@ -10,4 +11,8 @@ if (!rootElement) {
     throw new Error('Root element not found');
 }
 
-createRoot(rootElement).render(<App />);
+createRoot(rootElement).render(
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+);
