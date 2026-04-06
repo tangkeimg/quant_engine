@@ -28,6 +28,15 @@ function StockChart({ chartData, loading }) {
                     areaStyle: { color: 'rgba(233, 30, 99, 0.1)' },
                     lineStyle: { width: 2 },
                 },
+                {
+                    name: 'MA5',
+                    type: 'line',
+                    data: chartData.ma5,
+                    smooth: true,  // MA5 一般是平滑线
+                    showSymbol: false,
+                    lineStyle: { width: 2, color: '#FF9800' },  // 设置 MA5 线的颜色
+                    itemStyle: { color: '#FF9800' },
+                },
             ],
         };
     };
