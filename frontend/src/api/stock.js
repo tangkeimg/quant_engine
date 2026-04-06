@@ -7,3 +7,7 @@ import { request } from './request';
 export const getIndexData = () => {
     return request('/api/stocks/index');
 };
+
+export const getMAStrategyData = () => {
+  return request('/api/stocks/strategy/ma');
+};
