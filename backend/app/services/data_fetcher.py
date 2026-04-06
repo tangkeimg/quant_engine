@@ -24,10 +24,11 @@ def get_index_data(days: int = 365) -> dict:
     df = pd.read_parquet(DATA_FILE)
     df = df.tail(days)  # 获取最近days天的数据
 
+    df['ma5'] = df['close'].rolling(window=5).mean()  # 计算5日均线
+    df['ma5'] = df['ma5'].fillna(0)
+
     return {
         "dates": df['date'].dt.strftime('%Y-%m-%d').tolist(),
-        "closes": df['close'].tolist()
+        "closes": df['close'].tolist(),
+        "ma5": df['ma5'].round(2).tolist()
     }
-
-if __name__ == "__main__":
-    download_and_save_index()
