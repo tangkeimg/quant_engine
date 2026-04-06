@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Spin, Toast } from '@douyinfe/semi-ui';
 import StockChart from '@/components/StockChart';
-import { getIndexData, type StockData } from '@/api/stock';
+import { getIndexData } from '@/api/stock';
 
-const Dashboard: React.FC = () => {
-    const [chartData, setChartData] = useState<StockData | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+function Dashboard() {
+    const [chartData, setChartData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getIndexData()
-            .then((data: StockData) => {
+            .then((data) => {
                 setChartData(data);
                 Toast.success({ content: '大盘数据加载完成' });
             })
@@ -25,11 +25,10 @@ const Dashboard: React.FC = () => {
             headerStyle={{ borderBottom: 'none', paddingBottom: 0 }}
         >
             <Spin spinning={loading} tip="引擎数据加载中，请稍候...">
-                {/* 使用抽离出来的组件 */}
                 <StockChart chartData={chartData} loading={loading} />
             </Spin>
         </Card>
     );
-};
+}
 
 export default Dashboard;

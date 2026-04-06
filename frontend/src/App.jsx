@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout, Typography } from '@douyinfe/semi-ui';
 import Dashboard from './pages/Dashboard';
 import useThemeStore from '@/store/useThemeStore';
@@ -7,14 +7,18 @@ import useThemeStore from '@/store/useThemeStore';
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-const App: React.FC = () => {
-    const theme = useThemeStore((s) => s.theme);
+function App() {
+    const theme = useThemeStore((state) => state.theme);
 
     useEffect(() => {
         const body = document.body;
-        theme === 'dark'
-            ? body.setAttribute('theme-mode', 'dark')
-            : body.removeAttribute('theme-mode');
+
+        if (theme === 'dark') {
+            body.setAttribute('theme-mode', 'dark');
+            return;
+        }
+
+        body.removeAttribute('theme-mode');
     }, [theme]);
 
     return (
@@ -36,6 +40,6 @@ const App: React.FC = () => {
             </Layout>
         </BrowserRouter>
     );
-};
+}
 
 export default App;
