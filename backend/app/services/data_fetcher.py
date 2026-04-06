@@ -1,8 +1,11 @@
+from operator import ge
+
 import akshare as ak
 import pandas as pd
-import os;
+import os
 
 DATA_FILE = "data/sh000001.parquet"
+
 
 def download_and_save_index():
     """
@@ -10,9 +13,10 @@ def download_and_save_index():
     """
     print("正在下载上证指数数据...")
     df = ak.stock_zh_index_daily(symbol="sh000001")
-    df['date'] = pd.to_datetime(df['date'])
+    df["date"] = pd.to_datetime(df["date"])
     df.to_parquet(DATA_FILE)
     print(f"数据已保存到 {DATA_FILE}")
+
 
 def get_index_data(days: int = 365) -> dict:
     """
@@ -20,15 +24,19 @@ def get_index_data(days: int = 365) -> dict:
     """
     if not os.path.exists(DATA_FILE):
         download_and_save_index()
-    
+
     df = pd.read_parquet(DATA_FILE)
     df = df.tail(days)  # 获取最近days天的数据
 
-    df['ma5'] = df['close'].rolling(window=5).mean()  # 计算5日均线
-    df['ma5'] = df['ma5'].fillna(0)
+    df["ma5"] = df["close"].rolling(window=5).mean()  # 计算5日均线
+    df["ma20"] = df["close"].rolling(window=20).mean()  # 计算20日均线
 
+    ma5_list = [None if pd.isna(x) else round(float(x), 2) for x in df["ma5"]]
+    ma20_list = [None if pd.isna(x) else round(float(x), 2) for x in df["ma20"]]
+    
     return {
-        "dates": df['date'].dt.strftime('%Y-%m-%d').tolist(),
-        "closes": df['close'].tolist(),
-        "ma5": df['ma5'].round(2).tolist()
+        "dates": df["date"].dt.strftime("%Y-%m-%d").tolist(),
+        "closes": df["close"].tolist(),
+        "ma5": ma5_list,
+        "ma20": ma20_list,
     }
