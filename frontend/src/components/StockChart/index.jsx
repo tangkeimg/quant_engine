@@ -1,4 +1,5 @@
 import ReactECharts from 'echarts-for-react';
+
 import useThemeStore from '@/store/useThemeStore';
 
 function StockChart({ chartData, loading }) {
@@ -9,14 +10,52 @@ function StockChart({ chartData, loading }) {
             return {};
         }
 
+        const signals = chartData.signals || [];
+
+        const buyPoints = chartData.dates
+            .map((date, index) => {
+                if (signals[index] !== 1) return null;
+                return {
+                    name: '买入',
+                    value: [date, Number(chartData.closes[index]) * 0.995],
+                };
+            })
+            .filter(Boolean);
+
+        const sellPoints = chartData.dates
+            .map((date, index) => {
+                if (signals[index] !== -1) return null;
+                return {
+                    name: '卖出',
+                    value: [date, Number(chartData.closes[index]) * 1.005],
+                };
+            })
+            .filter(Boolean);
+
         return {
-            tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'cross' },
+            },
+            legend: {
+                top: 10,
+            },
             dataZoom: [
                 { type: 'inside', start: 50, end: 100 },
                 { type: 'slider', start: 50, end: 100 },
             ],
-            xAxis: { type: 'category', data: chartData.dates, boundaryGap: false },
-            yAxis: { type: 'value', scale: true, splitLine: { lineStyle: { type: 'dashed', color: '#eee' } } },
+            xAxis: {
+                type: 'category',
+                data: chartData.dates,
+                boundaryGap: false,
+            },
+            yAxis: {
+                type: 'value',
+                scale: true,
+                splitLine: {
+                    lineStyle: { type: 'dashed', color: '#eee' },
+                },
+            },
             series: [
                 {
                     name: '上证指数',
@@ -32,12 +71,12 @@ function StockChart({ chartData, loading }) {
                     name: 'MA5',
                     type: 'line',
                     data: chartData.ma5,
-                    smooth: true,  // MA5 一般是平滑线
+                    smooth: true,
                     showSymbol: false,
-                    lineStyle: { width: 2, color: '#FF9800' },  // 设置 MA5 线的颜色
+                    lineStyle: { width: 2, color: '#FF9800' },
                     itemStyle: { color: '#FF9800' },
                 },
-                 {
+                {
                     name: 'MA20',
                     type: 'line',
                     data: chartData.ma20,
@@ -45,6 +84,49 @@ function StockChart({ chartData, loading }) {
                     showSymbol: false,
                     lineStyle: { width: 2, color: '#2196F3' },
                     itemStyle: { color: '#2196F3' },
+                },
+                {
+                    name: '买入点',
+                    type: 'scatter',
+                    data: buyPoints,
+                    symbol: 'triangle',
+                    symbolSize: 14,
+                    itemStyle: { color: '#16a34a' },
+                    label: {
+                        show: true,
+                        formatter: '买',
+                        position: 'bottom',
+                        color: '#16a34a',
+                        fontWeight: 'bold',
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter(params) {
+                            return `买入信号<br/>日期：${params.value[0]}<br/>点位：${chartData.closes[chartData.dates.indexOf(params.value[0])]}`;
+                        },
+                    },
+                },
+                {
+                    name: '卖出点',
+                    type: 'scatter',
+                    data: sellPoints,
+                    symbol: 'triangle',
+                    symbolRotate: 180,
+                    symbolSize: 14,
+                    itemStyle: { color: '#dc2626' },
+                    label: {
+                        show: true,
+                        formatter: '卖',
+                        position: 'top',
+                        color: '#dc2626',
+                        fontWeight: 'bold',
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter(params) {
+                            return `卖出信号<br/>日期：${params.value[0]}<br/>点位：${chartData.closes[chartData.dates.indexOf(params.value[0])]}`;
+                        },
+                    },
                 },
             ],
         };
