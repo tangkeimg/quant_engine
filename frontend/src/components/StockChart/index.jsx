@@ -37,6 +37,15 @@ function StockChart({ chartData, loading }) {
                     lineStyle: { width: 2, color: '#FF9800' },  // 设置 MA5 线的颜色
                     itemStyle: { color: '#FF9800' },
                 },
+                 {
+                    name: 'MA20',
+                    type: 'line',
+                    data: chartData.ma20,
+                    smooth: true,
+                    showSymbol: false,
+                    lineStyle: { width: 2, color: '#2196F3' },
+                    itemStyle: { color: '#2196F3' },
+                },
             ],
         };
     };
