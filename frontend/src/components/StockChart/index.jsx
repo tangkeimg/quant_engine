@@ -17,7 +17,7 @@ function StockChart({ chartData, loading }) {
                 if (signals[index] !== 1) return null;
                 return {
                     name: '买入',
-                    value: [date, Number(chartData.closes[index]) * 0.995],
+                    value: [date, Number(chartData.closes[index]) * 0.985],
                 };
             })
             .filter(Boolean);
@@ -27,7 +27,7 @@ function StockChart({ chartData, loading }) {
                 if (signals[index] !== -1) return null;
                 return {
                     name: '卖出',
-                    value: [date, Number(chartData.closes[index]) * 1.005],
+                    value: [date, Number(chartData.closes[index]) * 1.015],
                 };
             })
             .filter(Boolean);
@@ -90,7 +90,9 @@ function StockChart({ chartData, loading }) {
                     type: 'scatter',
                     data: buyPoints,
                     symbol: 'triangle',
-                    symbolSize: 14,
+                    symbolSize: 18,
+                    z: 20,
+                    zlevel: 2,
                     itemStyle: { color: '#16a34a' },
                     label: {
                         show: true,
@@ -99,10 +101,16 @@ function StockChart({ chartData, loading }) {
                         color: '#16a34a',
                         fontWeight: 'bold',
                     },
+                    emphasis: {
+                        scale: 1.3,
+                    },
                     tooltip: {
+                        show: true,
                         trigger: 'item',
                         formatter(params) {
-                            return `买入信号<br/>日期：${params.value[0]}<br/>点位：${chartData.closes[chartData.dates.indexOf(params.value[0])]}`;
+                            const date = params.value[0];
+                            const index = chartData.dates.indexOf(date);
+                            return `买入信号<br/>日期：${date}<br/>点位：${chartData.closes[index]}`;
                         },
                     },
                 },
@@ -112,7 +120,9 @@ function StockChart({ chartData, loading }) {
                     data: sellPoints,
                     symbol: 'triangle',
                     symbolRotate: 180,
-                    symbolSize: 14,
+                    symbolSize: 18,
+                    z: 20,
+                    zlevel: 2,
                     itemStyle: { color: '#dc2626' },
                     label: {
                         show: true,
@@ -121,10 +131,16 @@ function StockChart({ chartData, loading }) {
                         color: '#dc2626',
                         fontWeight: 'bold',
                     },
+                    emphasis: {
+                        scale: 1.3,
+                    },
                     tooltip: {
+                        show: true,
                         trigger: 'item',
                         formatter(params) {
-                            return `卖出信号<br/>日期：${params.value[0]}<br/>点位：${chartData.closes[chartData.dates.indexOf(params.value[0])]}`;
+                            const date = params.value[0];
+                            const index = chartData.dates.indexOf(date);
+                            return `卖出信号<br/>日期：${date}<br/>点位：${chartData.closes[index]}`;
                         },
                     },
                 },
