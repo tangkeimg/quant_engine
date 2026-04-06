@@ -1,4 +1,4 @@
-from operator import ge
+from app.strategies.ma_strategy import apply_ma_signal
 
 import akshare as ak
 import pandas as pd
@@ -28,17 +28,7 @@ def get_index_data(days: int = 365) -> dict:
     df = pd.read_parquet(DATA_FILE)
     df = df.tail(days)  # 获取最近days天的数据
 
-    df["ma5"] = df["close"].rolling(window=5).mean()  # 计算5日均线
-    df["ma20"] = df["close"].rolling(window=20).mean()  # 计算20日均线
-
-    # 信号：1=买入，-1=卖出，0=无信号
-    df["signal"] = 0
-
-    buy_mask = (df["ma5"] > df["ma20"]) & (df["ma5"].shift(1) <= df["ma20"].shift(1))
-    sell_mask = (df["ma5"] < df["ma20"]) & (df["ma5"].shift(1) >= df["ma20"].shift(1))
-
-    df.loc[buy_mask, "signal"] = 1
-    df.loc[sell_mask, "signal"] = -1
+    df = apply_ma_signal(df, 5, 20)
 
     ma5_list = [None if pd.isna(x) else round(float(x), 2) for x in df["ma5"]]
     ma20_list = [None if pd.isna(x) else round(float(x), 2) for x in df["ma20"]]
