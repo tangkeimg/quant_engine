@@ -1,26 +1,11 @@
-import { useEffect } from 'react';
 import { useRoutes } from 'react-router-dom';
 import { Layout, Typography } from '@douyinfe/semi-ui';
 import routes from './router';
-import useThemeStore from '@/store/useThemeStore';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
 function App() {
-    const theme = useThemeStore((state) => state.theme);
-
-    useEffect(() => {
-        const body = document.body;
-
-        if (theme === 'dark') {
-            body.setAttribute('theme-mode', 'dark');
-            return;
-        }
-
-        body.removeAttribute('theme-mode');
-    }, [theme]);
-
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Header style={{ padding: '16px 24px', borderBottom: '1px solid var(--semi-color-border)' }}>
